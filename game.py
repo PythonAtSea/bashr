@@ -7,7 +7,7 @@ screen = pygame.display.set_mode((width, height), flags=pygame.RESIZABLE)
 clock = pygame.time.Clock()
 running = True
 imgs = [
-    pygame.transform.scale_by(pygame.image.load("images/sand.png"), 4),
+    pygame.image.load("images/sand.png"),
 ]
 offset = [0, 0]
 cursor = pygame.cursors.Cursor(
