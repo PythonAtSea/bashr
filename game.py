@@ -24,7 +24,7 @@ map = [
     [0, None, None, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, None, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -40,33 +40,20 @@ class Player:
         self.y = y
         self.dy = 0
         self.rect = pygame.Rect(abs(self.x) - 36, abs(self.y) - 42, 72, 96)
-
+        self.jumped=False
     def draw(self):
-        screen.blit(gg_imgs[0], (int(width / 2 - 36), int(height / 2 - 48)))
+        screen.blit(gg_imgs[0], (int(width / 2 - 36), int(height / 2 - 42)))
         self.rect = pygame.Rect(abs(self.x) - 36, abs(self.y) - 42, 72, 96)
-        if DEBUG:
-            pygame.draw.circle(
-                screen,
-                (255, 0, 0),
-                (self.x, self.y),
-                4,
-            )
-            pygame.draw.rect(
-                screen,
-                "yellow",
-                (
-                    abs(self.x) - 36,
-                    abs(self.y) - 48,
-                    72,
-                    96,
-                ),
-                4,
-            )
 
     def move(self):
         self.dy -= 0.4
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_SPACE] and not self.jumped:
             self.dy = 12
+            self.jumped=True
+        elif keys[pygame.K_SPACE]:
+            self.jumped=True
+        else:
+            self.jumped=False
         if keys[pygame.K_a]:
             self.x += 4
         if keys[pygame.K_d]:
@@ -88,7 +75,6 @@ class Player:
                     and abs(self.y) != self.y
                     and abs(self.x) != self.x
                 ):
-                    print("Y")
                     self.y += 0.1
                     self.dy = 0
                     collided = True
@@ -119,8 +105,6 @@ class Tile:
         ):
             screen.blit(map_imgs[self.img], (x, y))
             self.inframe = True
-            if DEBUG:
-                pygame.draw.rect(screen, "red", self.rect, 4)
         else:
             self.inframe = False
         self.rect = pygame.Rect(self.x, self.y, TILE_SIZE, TILE_SIZE)
@@ -132,10 +116,10 @@ for i in range(len(map)):
     for j in range(len(map[i])):
         tiles.append(Tile(j, i, map[i][j]))
 while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
     keys = pygame.key.get_pressed()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT or keys[pygame.K_q]:
+            running = False
     screen.fill("purple")
     """
     for i in range(len(map)):
