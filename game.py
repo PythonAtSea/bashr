@@ -41,8 +41,12 @@ class Player:
         self.dy = 0
         self.rect = pygame.Rect(abs(self.x) - 36, abs(self.y) - 42, 72, 96)
         self.jumped=False
+        self.dir=True
     def draw(self):
-        screen.blit(gg_imgs[0], (int(width / 2 - 36), int(height / 2 - 42)))
+        if self.dir:
+            screen.blit(gg_imgs[0], (int(width / 2 - 36), int(height / 2 - 42)))
+        else:
+            screen.blit(pygame.transform.flip(gg_imgs[0], True, False), (int(width / 2 - 36), int(height / 2 - 42)))
         self.rect = pygame.Rect(abs(self.x) - 36, abs(self.y) - 42, 72, 96)
 
     def move(self):
@@ -55,8 +59,10 @@ class Player:
         else:
             self.jumped=False
         if keys[pygame.K_a]:
+            self.dir=False
             self.x += 4
         if keys[pygame.K_d]:
+            self.dir=True
             self.x -= 4
         self.y += self.dy
         iftiles = []
