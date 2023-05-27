@@ -21,7 +21,7 @@ pygame.mouse.set_cursor(
 )
 map = [
     [None, None, None, None, None, None, None, None, None, None],
-    [0, None, None, 0, 0, 0, 0, 0, 0, 0],
+    [0, None, None, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -32,7 +32,7 @@ map = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ]
 DEBUG = True
-
+font=pygame.font.Font("fonts/Pixel.ttf",28)
 
 class Player:
     def __init__(self, x, y):
@@ -46,9 +46,9 @@ class Player:
         self.rect = pygame.Rect(abs(self.x) - 36, abs(self.y) - 42, 72, 96)
 
     def move(self):
-        self.dy -= 0.4
+        self.dy -= 0.8
         if keys[pygame.K_SPACE] and not self.jumped:
-            self.dy = 12
+            self.dy = 20
             self.jumped=True
         elif keys[pygame.K_SPACE]:
             self.jumped=True
@@ -66,6 +66,8 @@ class Player:
         self.rect = pygame.Rect(abs(self.x) - 36, abs(self.y) - 42, 72, 96)
         colliding = True
         collided = False
+        bounce=False
+        origdy=self.dy
         while colliding:
             collided = False
             for tile in iftiles:
@@ -74,14 +76,17 @@ class Player:
                     and abs(self.y) + TILE_SIZE > abs(tile.y)
                     and abs(self.y) != self.y
                     and abs(self.x) != self.x
+                    and self.dy <= 0
                 ):
                     self.y += 0.1
                     self.dy = 0
                     collided = True
+                    bounce=True
                     self.rect = pygame.Rect(abs(self.x) - 36, abs(self.y) - 42, 72, 96)
+                    self.jumped=False
             colliding = collided
-
-
+        if bounce:
+            self.dy=abs(origdy)*0.45
 class Tile:
     def __init__(self, x, y, img):
         self.x = x * TILE_SIZE
@@ -115,6 +120,7 @@ tiles = []
 for i in range(len(map)):
     for j in range(len(map[i])):
         tiles.append(Tile(j, i, map[i][j]))
+dt=0
 while running:
     keys = pygame.key.get_pressed()
     for event in pygame.event.get():
@@ -144,7 +150,9 @@ while running:
     player.draw()
     player.move()
 
-    clock.tick(60)
+    dt=clock.tick(60)
+    fps=clock.get_fps()
+    screen.blit(font.render(str(round(fps))+" FPS", False, (255,255,255), ),(10,10))
     pygame.display.flip()
 
 pygame.quit()
